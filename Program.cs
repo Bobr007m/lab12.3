@@ -6,10 +6,15 @@ using System.Threading.Tasks;
 
 namespace lab12._3
 {
-    internal class Program
+     class Program
     {
         static void Main(string[] args)
         {
+            int size = 5;
+            Point idTree = null;
+            idTree = ldeaITree(size,
+            idTree);
+            ShowTree(idTree, 3);
         }
     }
 }
