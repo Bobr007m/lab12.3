@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Geometryclass;
 
 namespace lab12._3
@@ -27,14 +24,21 @@ namespace lab12._3
                 Console.WriteLine("0. Выход");
                 Console.Write("Выберите действие: ");
 
-                switch (Console.ReadLine())
+                string input = Console.ReadLine();
+                switch (input)
                 {
                     case "1":
-                        Console.Write("Введите размер дерева: ");
-                        int size = int.Parse(Console.ReadLine());
-                        tree.CreateBalancedTree(size);
-                        Console.WriteLine("\nИсходное дерево:");
-                        tree.PrintTree(original: true);
+                        Console.Write("Введите размер дерева (положительное целое число): ");
+                        if (int.TryParse(Console.ReadLine(), out int size) && size > 0)
+                        {
+                            tree.CreateBalancedTree(size);
+                            Console.WriteLine("\nИсходное дерево:");
+                            tree.PrintTree(original: true);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Ошибка: введите положительное целое число");
+                        }
                         break;
 
                     case "2":
@@ -52,12 +56,19 @@ namespace lab12._3
                         break;
 
                     case "5":
-                        tree.ConvertToAVLTree();
-                        Console.WriteLine("\nДерево преобразовано в АВЛ-дерево поиска");
-                        Console.WriteLine("\nИсходное дерево:");
-                        tree.PrintTree(original: true);
-                        Console.WriteLine("\nАВЛ-дерево:");
-                        tree.PrintTree();
+                        if (tree.CountLeaves() > 0)
+                        {
+                            tree.ConvertToAVLTree();
+                            Console.WriteLine("\nДерево преобразовано в АВЛ-дерево поиска");
+                            Console.WriteLine("\nИсходное дерево:");
+                            tree.PrintTree(original: true);
+                            Console.WriteLine("\nАВЛ-дерево:");
+                            tree.PrintTree();
+                        }
+                        else
+                        {
+                            Console.WriteLine("Ошибка: дерево пустое");
+                        }
                         break;
 
                     case "6":
@@ -77,24 +88,31 @@ namespace lab12._3
                         break;
 
                     case "7":
-                        Console.WriteLine("\nВыберите тип фигуры для удаления:");
-                        Console.WriteLine("1 - Прямоугольник");
-                        Console.WriteLine("2 - Окружность");
-                        Console.WriteLine("3 - Параллелепипед");
-                        Console.Write("Ваш выбор: ");
-                        string delType = Console.ReadLine();
-                        Geometryfigure1 delFigure = CreateFigure(delType);
-                        if (delFigure != null)
+                        if (tree.CountLeaves() > 0)
                         {
-                            if (tree.DeleteNode(delFigure))
+                            Console.WriteLine("\nВыберите тип фигуры для удаления:");
+                            Console.WriteLine("1 - Прямоугольник");
+                            Console.WriteLine("2 - Окружность");
+                            Console.WriteLine("3 - Параллелепипед");
+                            Console.Write("Ваш выбор: ");
+                            string delType = Console.ReadLine();
+                            Geometryfigure1 delFigure = CreateFigure(delType);
+                            if (delFigure != null)
                             {
-                                Console.WriteLine("\nЭлемент удален. Текущее дерево:");
-                                tree.PrintTree();
+                                if (tree.DeleteNode(delFigure))
+                                {
+                                    Console.WriteLine("\nЭлемент удален. Текущее дерево:");
+                                    tree.PrintTree();
+                                }
+                                else
+                                {
+                                    Console.WriteLine("Элемент не найден");
+                                }
                             }
-                            else
-                            {
-                                Console.WriteLine("Элемент не найден");
-                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Ошибка: дерево пустое");
                         }
                         break;
 
@@ -103,7 +121,7 @@ namespace lab12._3
                         break;
 
                     default:
-                        Console.WriteLine("Неверный ввод");
+                        Console.WriteLine("Неверный ввод. Пожалуйста, выберите пункт меню от 0 до 7");
                         break;
                 }
             }
@@ -111,29 +129,46 @@ namespace lab12._3
 
         static Geometryfigure1 CreateFigure(string type)
         {
-            switch (type)
+            try
             {
-                case "1":
-                    Console.Write("Ширина: ");
-                    double w = double.Parse(Console.ReadLine());
-                    Console.Write("Длина: ");
-                    double l = double.Parse(Console.ReadLine());
-                    return new Rectangle1(w, l);
-                case "2":
-                    Console.Write("Радиус: ");
-                    double r = double.Parse(Console.ReadLine());
-                    return new Circle1(r);
-                case "3":
-                    Console.Write("Высота: ");
-                    double hp = double.Parse(Console.ReadLine());
-                    Console.Write("Ширина: ");
-                    double wp = double.Parse(Console.ReadLine());
-                    Console.Write("Длина: ");
-                    double lp = double.Parse(Console.ReadLine());
-                    return new Parallelepiped1(hp, wp, lp);
-                default:
-                    Console.WriteLine("Неверный выбор");
-                    return null;
+                switch (type)
+                {
+                    case "1":
+                        Console.Write("Ширина (положительное число): ");
+                        if (!double.TryParse(Console.ReadLine(), out double w) || w <= 0)
+                            throw new ArgumentException("Некорректная ширина");
+                        Console.Write("Длина (положительное число): ");
+                        if (!double.TryParse(Console.ReadLine(), out double l) || l <= 0)
+                            throw new ArgumentException("Некорректная длина");
+                        return new Rectangle1(w, l);
+
+                    case "2":
+                        Console.Write("Радиус (положительное число): ");
+                        if (!double.TryParse(Console.ReadLine(), out double r) || r <= 0)
+                            throw new ArgumentException("Некорректный радиус");
+                        return new Circle1(r);
+
+                    case "3":
+                        Console.Write("Высота (положительное число): ");
+                        if (!double.TryParse(Console.ReadLine(), out double hp) || hp <= 0)
+                            throw new ArgumentException("Некорректная высота");
+                        Console.Write("Ширина (положительное число): ");
+                        if (!double.TryParse(Console.ReadLine(), out double wp) || wp <= 0)
+                            throw new ArgumentException("Некорректная ширина");
+                        Console.Write("Длина (положительное число): ");
+                        if (!double.TryParse(Console.ReadLine(), out double lp) || lp <= 0)
+                            throw new ArgumentException("Некорректная длина");
+                        return new Parallelepiped1(hp, wp, lp);
+
+                    default:
+                        Console.WriteLine("Неверный выбор типа фигуры");
+                        return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+                return null;
             }
         }
     }
