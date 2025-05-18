@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Geometryclass;
 
 namespace lab12._3
 {
@@ -82,16 +83,68 @@ namespace lab12._3
 
             return r;
         }
+        // Выводит бинарное дерево с отступами
         static void ShowTree(Point p, int l)
         {
             if (p != null)
             {
+                // Рекурсивно выводим левое поддерево с увеличенным отступом
                 ShowTree(p.left, l + 3);
+
+                // Вывод отступов 
                 for (int i = 0; i < l; i++)
                     Console.Write(" ");
+
+                // Вывод значения текущего узла
                 Console.WriteLine(p.data);
+
+                // Рекурсивно выводим правое поддерево с увеличенным отступом
                 ShowTree(p.right, l + 3);
             }
+        }
+
+        // Создает новый узел дерева с заданным значением
+        static Point MakePoint(int d)
+        {
+            Point p = new Point(d); 
+            return p; 
+        }
+
+        // Добавляет новый узел в бинарное дерево поиска
+        static Point Add(Point root, int d)
+        {
+            Point p = root;  // Текущий узел при обходе
+            Point r = null;  // Родительский узел
+            bool ok = false; // Флаг обнаружения дубликата
+
+            // Поиск места для вставки 
+            while (p != null && !ok)
+            {
+                r = p; // Запоминаем предыдущий узел
+
+                // Проверка на совпадение значений
+                if (d == p.data)
+                    ok = true; 
+                else if (d < p.data)
+                    p = p.left; 
+                else
+                    p = p.right; 
+            }
+
+            // Если значение уже есть в дереве
+            if (ok)
+                return p; // Возвращаем существующий узел
+
+            // Создаем новый узел
+            Point NewPoint = MakePoint(d);
+
+            // Вставляем новый узел в нужное место
+            if (d < r.data)
+                r.left = NewPoint;  
+            else
+                r.right = NewPoint; 
+
+            return NewPoint; // Возвращаем новый узел
         }
     }
 }

@@ -50,5 +50,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ceometryclass\Geometryclass.csproj">
+      <Project>{88570832-aaeb-4fef-821c-d9b0322a6285}</Project>
+      <Name>Geometryclass</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
