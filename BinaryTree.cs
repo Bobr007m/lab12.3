@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using Geometryclass;
 
 namespace lab12._3
@@ -14,13 +15,116 @@ namespace lab12._3
             public Geometryfigure1 Data;
             public TreeNode Left;
             public TreeNode Right;
+            public int Height; // Высота поддерева
 
             public TreeNode(Geometryfigure1 data)
             {
                 Data = data;
                 Left = null;
                 Right = null;
+                Height = 1; // Начальная высота нового узла
             }
+        }
+        private int GetHeight(TreeNode node)
+        {
+            return node?.Height ?? 0;
+        }
+
+        private void UpdateHeight(TreeNode node)
+        {
+            if (node != null)
+                node.Height = 1 + Math.Max(GetHeight(node.Left), GetHeight(node.Right));
+        }
+        private int GetBalanceFactor(TreeNode node)
+        {
+            if (node == null) return 0;
+            return GetHeight(node.Left) - GetHeight(node.Right);
+        }
+        public void ConvertToAVLTree()
+        {
+            // Собираем все элементы дерева в отсортированный список
+            List<Geometryfigure1> elements = new List<Geometryfigure1>();
+            InOrderTraversal(root, elements);
+            elements.Sort((a, b) => a.CompareTo(b));
+
+            // Строим сбалансированное АВЛ-дерево из отсортированного списка
+            root = BuildAVLTree(elements, 0, elements.Count - 1);
+        }
+
+        private TreeNode BuildAVLTree(List<Geometryfigure1> elements, int start, int end)
+        {
+            if (start > end) return null;
+
+            int mid = (start + end) / 2;
+            TreeNode node = new TreeNode(elements[mid]);
+
+            node.Left = BuildAVLTree(elements, start, mid - 1);
+            node.Right = BuildAVLTree(elements, mid + 1, end);
+
+            // Обновляем высоту и балансируем узел
+            UpdateHeight(node);
+            return Balance(node);
+        }
+
+        // Правый поворот (LL)
+        private TreeNode RightRotate(TreeNode y)
+        {
+            TreeNode x = y.Left;
+            TreeNode T2 = x.Right;
+
+            x.Right = y;
+            y.Left = T2;
+
+            UpdateHeight(y);
+            UpdateHeight(x);
+
+            return x;
+        }
+
+        // Левый поворот (RR)
+        private TreeNode LeftRotate(TreeNode x)
+        {
+            TreeNode y = x.Right;
+            TreeNode T2 = y.Left;
+
+            y.Left = x;
+            x.Right = T2;
+
+            UpdateHeight(x);
+            UpdateHeight(y);
+
+            return y;
+        }
+        private TreeNode Balance(TreeNode node)
+        {
+            if (node == null) return null;
+
+            UpdateHeight(node);
+            int balanceFactor = GetBalanceFactor(node);
+
+            // LL-случай
+            if (balanceFactor > 1 && GetBalanceFactor(node.Left) >= 0)
+                return RightRotate(node);
+
+            // RR-случай
+            if (balanceFactor < -1 && GetBalanceFactor(node.Right) <= 0)
+                return LeftRotate(node);
+
+            // LR-случай
+            if (balanceFactor > 1 && GetBalanceFactor(node.Left) < 0)
+            {
+                node.Left = LeftRotate(node.Left);
+                return RightRotate(node);
+            }
+
+            // RL-случай
+            if (balanceFactor < -1 && GetBalanceFactor(node.Right) > 0)
+            {
+                node.Right = RightRotate(node.Right);
+                return LeftRotate(node);
+            }
+
+            return node;
         }
 
         private TreeNode root;
@@ -66,13 +170,25 @@ namespace lab12._3
             int type = rnd.Next(0, 3);
             switch (type)
             {
-                case 0: return new Rectangle1(rnd.Next(1, 10), rnd.Next(1, 10));
-                case 1: return new Circle1(rnd.Next(1, 10));
-                case 2: return new Parallelepiped1(rnd.Next(1, 10), rnd.Next(1, 10), rnd.Next(1, 10));
-                default: return new Rectangle1(1, 1);
+                case 0:
+                    var rect = new Rectangle1(rnd.Next(1, 10), rnd.Next(1, 10));
+                    Console.WriteLine($"Добавлен прямоугольник: Ширина={rect.Width}, Высота={rect.Length}");
+                    return rect;
+
+                case 1:
+                    var circle = new Circle1(rnd.Next(1, 10));
+                    Console.WriteLine($"Добавлена окружность: Радиус={circle.Radius}");
+                    return circle;
+
+                case 2:
+                    var paral = new Parallelepiped1(rnd.Next(1, 10), rnd.Next(1, 10), rnd.Next(1, 10));
+                    Console.WriteLine($"Добавлен параллелепипед: Высота={paral.Height}, Ширина={paral.Width}, Длина={paral.Length}");
+                    return paral;
+
+                default:
+                    return new Rectangle1(1, 1);
             }
         }
-
         public void PrintTree(bool original = false)
         {
             TreeNode currentRoot = original ? originalRoot : root;
@@ -151,6 +267,7 @@ namespace lab12._3
             int initialCount = CountLeaves();
             root = DeleteNode(root, key);
             return initialCount != CountLeaves();
+            
         }
 
         private TreeNode DeleteNode(TreeNode node, Geometryfigure1 key)
@@ -171,7 +288,7 @@ namespace lab12._3
                 node.Data = temp.Data;
                 node.Right = DeleteNode(node.Right, temp.Data);
             }
-            return node;
+            return Balance(node); // Балансировка после удаления
         }
 
         private TreeNode FindMin(TreeNode node)
@@ -179,6 +296,26 @@ namespace lab12._3
             while (node.Left != null) node = node.Left;
             return node;
         }
+        public void Insert(Geometryfigure1 data)
+        {
+            root = Insert(root, data);
+        }
+
+        private TreeNode Insert(TreeNode node, Geometryfigure1 data)
+        {
+            if (node == null) return new TreeNode(data);
+
+            int cmp = data.CompareTo(node.Data);
+            if (cmp < 0)
+                node.Left = Insert(node.Left, data);
+            else if (cmp > 0)
+                node.Right = Insert(node.Right, data);
+            else
+                return node; // Дубликаты не допускаются
+
+            return Balance(node); // Балансировка после вставки
+        }
+
     }
 }
 

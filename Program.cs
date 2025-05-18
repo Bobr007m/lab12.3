@@ -7,7 +7,7 @@ using Geometryclass;
 
 namespace lab12._3
 {
-     class Program
+    class Program
     {
         static void Main(string[] args)
         {
@@ -21,8 +21,9 @@ namespace lab12._3
                 Console.WriteLine("2. Показать исходное дерево (по уровням)");
                 Console.WriteLine("3. Показать преобразованное дерево (по уровням)");
                 Console.WriteLine("4. Найти количество листьев в текущем дереве");
-                Console.WriteLine("5. Преобразовать в дерево поиска");
-                Console.WriteLine("6. Удалить элемент");
+                Console.WriteLine("5. Преобразовать в АВЛ-дерево поиска");
+                Console.WriteLine("6. Добавить элемент в АВЛ-дерево");
+                Console.WriteLine("7. Удалить элемент из АВЛ-дерева");
                 Console.WriteLine("0. Выход");
                 Console.Write("Выберите действие: ");
 
@@ -51,59 +52,49 @@ namespace lab12._3
                         break;
 
                     case "5":
-                        tree.ConvertToSearchTree();
-                        Console.WriteLine("\nДерево преобразовано в дерево поиска");
+                        tree.ConvertToAVLTree();
+                        Console.WriteLine("\nДерево преобразовано в АВЛ-дерево поиска");
                         Console.WriteLine("\nИсходное дерево:");
                         tree.PrintTree(original: true);
-                        Console.WriteLine("\nПреобразованное дерево:");
+                        Console.WriteLine("\nАВЛ-дерево:");
                         tree.PrintTree();
                         break;
 
                     case "6":
+                        Console.WriteLine("\nВыберите тип фигуры для добавления:");
+                        Console.WriteLine("1 - Прямоугольник");
+                        Console.WriteLine("2 - Окружность");
+                        Console.WriteLine("3 - Параллелепипед");
+                        Console.Write("Ваш выбор: ");
+                        string addType = Console.ReadLine();
+                        Geometryfigure1 addFigure = CreateFigure(addType);
+                        if (addFigure != null)
+                        {
+                            tree.Insert(addFigure);
+                            Console.WriteLine("\nЭлемент добавлен. Текущее дерево:");
+                            tree.PrintTree();
+                        }
+                        break;
+
+                    case "7":
                         Console.WriteLine("\nВыберите тип фигуры для удаления:");
                         Console.WriteLine("1 - Прямоугольник");
                         Console.WriteLine("2 - Окружность");
                         Console.WriteLine("3 - Параллелепипед");
                         Console.Write("Ваш выбор: ");
-                        string type = Console.ReadLine();
-
-                        Geometryfigure1 figure;
-                        switch (type)
+                        string delType = Console.ReadLine();
+                        Geometryfigure1 delFigure = CreateFigure(delType);
+                        if (delFigure != null)
                         {
-                            case "1":
-                                Console.Write("Ширина: ");
-                                double w = double.Parse(Console.ReadLine());
-                                Console.Write("Длина: ");
-                                double l = double.Parse(Console.ReadLine());
-                                figure = new Rectangle1(w, l);
-                                break;
-                            case "2":
-                                Console.Write("Радиус: ");
-                                double r = double.Parse(Console.ReadLine());
-                                figure = new Circle1(r);
-                                break;
-                            case "3":
-                                Console.Write("Высота: ");
-                                double hp = double.Parse(Console.ReadLine());
-                                Console.Write("Ширина: ");
-                                double wp = double.Parse(Console.ReadLine());
-                                Console.Write("Длина: ");
-                                double lp = double.Parse(Console.ReadLine());
-                                figure = new Parallelepiped1(hp, wp, lp);
-                                break;
-                            default:
-                                Console.WriteLine("Неверный выбор");
-                                continue;
-                        }
-
-                        if (tree.DeleteNode(figure))
-                        {
-                            Console.WriteLine("\nЭлемент удален. Текущее дерево:");
-                            tree.PrintTree();
-                        }
-                        else
-                        {
-                            Console.WriteLine("Элемент не найден");
+                            if (tree.DeleteNode(delFigure))
+                            {
+                                Console.WriteLine("\nЭлемент удален. Текущее дерево:");
+                                tree.PrintTree();
+                            }
+                            else
+                            {
+                                Console.WriteLine("Элемент не найден");
+                            }
                         }
                         break;
 
@@ -115,6 +106,34 @@ namespace lab12._3
                         Console.WriteLine("Неверный ввод");
                         break;
                 }
+            }
+        }
+
+        static Geometryfigure1 CreateFigure(string type)
+        {
+            switch (type)
+            {
+                case "1":
+                    Console.Write("Ширина: ");
+                    double w = double.Parse(Console.ReadLine());
+                    Console.Write("Длина: ");
+                    double l = double.Parse(Console.ReadLine());
+                    return new Rectangle1(w, l);
+                case "2":
+                    Console.Write("Радиус: ");
+                    double r = double.Parse(Console.ReadLine());
+                    return new Circle1(r);
+                case "3":
+                    Console.Write("Высота: ");
+                    double hp = double.Parse(Console.ReadLine());
+                    Console.Write("Ширина: ");
+                    double wp = double.Parse(Console.ReadLine());
+                    Console.Write("Длина: ");
+                    double lp = double.Parse(Console.ReadLine());
+                    return new Parallelepiped1(hp, wp, lp);
+                default:
+                    Console.WriteLine("Неверный выбор");
+                    return null;
             }
         }
     }
