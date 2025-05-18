@@ -9,117 +9,177 @@ namespace lab12._3
 {
     public class BinaryTree
     {
-        Random rnd = new Random();
-        // Вспомогательная функция для генерации случайных данных
-        static int GetInfo()
+        private class TreeNode
         {
-            int info = rnd.Next(0, 100);  // Генерация случайного числа от 0 до 99
-            Console.WriteLine("The element {0} is adding...", info);
-            return info;
-        }
+            public Geometryfigure1 Data;
+            public TreeNode Left;
+            public TreeNode Right;
 
-        // Рекурсивная функция создания идеально сбалансированного бинарного дерева
-        static Point IdealTree(int size, Point p)
-        {
-            Point r;
-            int nl, nr;  // Количество элементов в левом и правом поддеревьях
-
-            // Базовый случай рекурсии - если размер дерева = 0
-            if (size == 0)
+            public TreeNode(Geometryfigure1 data)
             {
-                p = null;
-                return p;
-            }
-
-            // Вычисляем размеры поддеревьев
-            nl = size / 2;      // Левое поддерево получает половину элементов
-            nr = size - nl - 1; // Правое поддерево - оставшиеся (минус текущий узел)
-
-            // Создаем новый узел со случайным значением
-            int d = GetInfo();
-            r = new Point(d);
-
-            // Рекурсивно строим левое и правое поддеревья
-            r.left = IdealTree(nl, r.left);
-            r.right = IdealTree(nr, r.right);
-
-            return r;
-        }
-        // Выводит бинарное дерево с отступами
-        static void ShowTree(Point p, int l)
-        {
-            if (p != null)
-            {
-                // Рекурсивно выводим левое поддерево с увеличенным отступом
-                ShowTree(p.left, l + 3);
-
-                // Вывод отступов 
-                for (int i = 0; i < l; i++)
-                    Console.Write(" ");
-
-                // Вывод значения текущего узла
-                Console.WriteLine(p.data);
-
-                // Рекурсивно выводим правое поддерево с увеличенным отступом
-                ShowTree(p.right, l + 3);
+                Data = data;
+                Left = null;
+                Right = null;
             }
         }
 
-        // Создает новый узел дерева с заданным значением
-        static Point MakePoint(int d)
+        private TreeNode root;
+        private TreeNode originalRoot; // Сохраняем исходное дерево
+        private Random rnd = new Random();
+
+        public void CreateBalancedTree(int size)
         {
-            Point p = new Point(d);
-            return p;
+            root = BuildBalancedTree(size);
+            originalRoot = CloneTree(root); // Сохраняем копию исходного дерева
         }
 
-        // Добавляет новый узел в бинарное дерево поиска
-        static Point Add(Point root, int d)
+        private TreeNode BuildBalancedTree(int size)
         {
-            Point p = root;  // Текущий узел при обходе
-            Point r = null;  // Родительский узел
-            bool ok = false; // Флаг обнаружения дубликата
+            if (size == 0) return null;
 
-            // Поиск места для вставки 
-            while (p != null && !ok)
+            int leftSize = size / 2;
+            int rightSize = size - leftSize - 1;
+
+            Geometryfigure1 figure = GetRandomFigure();
+            Console.WriteLine($"Добавлена фигура: {figure}"); 
+
+            TreeNode node = new TreeNode(figure);
+            node.Left = BuildBalancedTree(leftSize);
+            node.Right = BuildBalancedTree(rightSize);
+
+            return node;
+        }
+
+        private TreeNode CloneTree(TreeNode node)
+        {
+            if (node == null) return null;
+
+            TreeNode newNode = new TreeNode((Geometryfigure1)node.Data.Clone());
+            newNode.Left = CloneTree(node.Left);
+            newNode.Right = CloneTree(node.Right);
+
+            return newNode;
+        }
+
+        private Geometryfigure1 GetRandomFigure()
+        {
+            int type = rnd.Next(0, 3);
+            switch (type)
             {
-                r = p; // Запоминаем предыдущий узел
+                case 0: return new Rectangle1(rnd.Next(1, 10), rnd.Next(1, 10));
+                case 1: return new Circle1(rnd.Next(1, 10));
+                case 2: return new Parallelepiped1(rnd.Next(1, 10), rnd.Next(1, 10), rnd.Next(1, 10));
+                default: return new Rectangle1(1, 1);
+            }
+        }
 
-                // Проверка на совпадение значений
-                if (d == p.data)
-                    ok = true;
-                else if (d < p.data)
-                    p = p.left;
-                else
-                    p = p.right;
+        public void PrintTree(bool original = false)
+        {
+            TreeNode currentRoot = original ? originalRoot : root;
+            if (currentRoot == null)
+            {
+                Console.WriteLine("Дерево пустое");
+                return;
             }
 
-            // Если значение уже есть в дереве
-            if (ok)
-                return p; // Возвращаем существующий узел
+            Queue<TreeNode> queue = new Queue<TreeNode>();
+            queue.Enqueue(currentRoot);
 
-            // Создаем новый узел
-            Point NewPoint = MakePoint(d);
+            int level = 0;
+            while (queue.Count > 0)
+            {
+                Console.Write($"Уровень {level}: ");
+                int levelSize = queue.Count;
 
-            // Вставляем новый узел в нужное место
-            if (d < r.data)
-                r.left = NewPoint;
+                for (int i = 0; i < levelSize; i++)
+                {
+                    TreeNode current = queue.Dequeue();
+                    Console.Write(current.Data + " | ");
+
+                    if (current.Left != null) queue.Enqueue(current.Left);
+                    if (current.Right != null) queue.Enqueue(current.Right);
+                }
+
+                Console.WriteLine();
+                level++;
+            }
+        }
+
+        public int CountLeaves(bool original = false)
+        {
+            return CountLeaves(original ? originalRoot : root);
+        }
+
+        private int CountLeaves(TreeNode node)
+        {
+            if (node == null) return 0;
+            if (node.Left == null && node.Right == null) return 1;
+            return CountLeaves(node.Left) + CountLeaves(node.Right);
+        }
+
+        public void ConvertToSearchTree()
+        {
+            List<Geometryfigure1> elements = new List<Geometryfigure1>();
+            InOrderTraversal(root, elements);
+            elements.Sort((a, b) => a.CompareTo(b));
+            root = BuildSearchTree(elements, 0, elements.Count - 1);
+        }
+
+        private TreeNode BuildSearchTree(List<Geometryfigure1> elements, int start, int end)
+        {
+            if (start > end) return null;
+
+            int mid = (start + end) / 2;
+            TreeNode node = new TreeNode(elements[mid]);
+
+            node.Left = BuildSearchTree(elements, start, mid - 1);
+            node.Right = BuildSearchTree(elements, mid + 1, end);
+
+            return node;
+        }
+
+        private void InOrderTraversal(TreeNode node, List<Geometryfigure1> elements)
+        {
+            if (node == null) return;
+            InOrderTraversal(node.Left, elements);
+            elements.Add(node.Data);
+            InOrderTraversal(node.Right, elements);
+        }
+
+        public bool DeleteNode(Geometryfigure1 key)
+        {
+            int initialCount = CountLeaves();
+            root = DeleteNode(root, key);
+            return initialCount != CountLeaves();
+        }
+
+        private TreeNode DeleteNode(TreeNode node, Geometryfigure1 key)
+        {
+            if (node == null) return null;
+
+            int cmp = key.CompareTo(node.Data);
+            if (cmp < 0)
+                node.Left = DeleteNode(node.Left, key);
+            else if (cmp > 0)
+                node.Right = DeleteNode(node.Right, key);
             else
-                r.right = NewPoint;
+            {
+                if (node.Left == null) return node.Right;
+                if (node.Right == null) return node.Left;
 
-            return NewPoint; // Возвращаем новый узел
+                TreeNode temp = FindMin(node.Right);
+                node.Data = temp.Data;
+                node.Right = DeleteNode(node.Right, temp.Data);
+            }
+            return node;
         }
 
-        // Формирование первого элемента дерева
-        static Point First(int d)
+        private TreeNode FindMin(TreeNode node)
         {
-            Point p = new Point(d);
-            return p;
+            while (node.Left != null) node = node.Left;
+            return node;
         }
-        int size = 5;
-        Point idTree = null;
-        idTree = IdealTree(size, idTree);
-        ShowTree(idTree, 3);
-
-
     }
 }
+
+
