@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lab12.3", "lab12.3.csproj",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Geometryclass", "..\Ceometryclass\Geometryclass.csproj", "{88570832-AAEB-4FEF-821C-D9B0322A6285}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject5", "..\TestProject5\TestProject5.csproj", "{3548F9BA-264E-44C6-8BAA-BA5E45FD8242}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{88570832-AAEB-4FEF-821C-D9B0322A6285}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{88570832-AAEB-4FEF-821C-D9B0322A6285}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{88570832-AAEB-4FEF-821C-D9B0322A6285}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3548F9BA-264E-44C6-8BAA-BA5E45FD8242}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3548F9BA-264E-44C6-8BAA-BA5E45FD8242}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3548F9BA-264E-44C6-8BAA-BA5E45FD8242}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3548F9BA-264E-44C6-8BAA-BA5E45FD8242}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
