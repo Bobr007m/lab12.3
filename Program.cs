@@ -4,9 +4,9 @@ using Geometryclass;
 
 namespace lab12._3
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             BinaryTree tree = new BinaryTree();
             bool exit = false;
@@ -127,7 +127,7 @@ namespace lab12._3
             }
         }
 
-        static Geometryfigure1 CreateFigure(string type)
+        public static Geometryfigure1 CreateFigure(string type)
         {
             try
             {
