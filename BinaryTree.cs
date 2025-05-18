@@ -42,13 +42,15 @@ namespace lab12._3
         }
         public void ConvertToAVLTree()
         {
-            // Собираем все элементы дерева в отсортированный список
             List<Geometryfigure1> elements = new List<Geometryfigure1>();
             InOrderTraversal(root, elements);
-            elements.Sort((a, b) => a.CompareTo(b));
 
-            // Строим сбалансированное АВЛ-дерево из отсортированного списка
-            root = BuildAVLTree(elements, 0, elements.Count - 1);
+            // Вместо простого BuildSearchTree используем AVL-построение
+            root = null; // Сбрасываем корень
+            foreach (var item in elements)
+            {
+                root = Insert(root, item); // Вставляем с балансировкой
+            }
         }
 
         private TreeNode BuildAVLTree(List<Geometryfigure1> elements, int start, int end)
