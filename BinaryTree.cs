@@ -1,5 +1,4 @@
-﻿// Основное пространство имен программы
-using Geometryclass;
+﻿using Geometryclass;
 using System.Collections.Generic;
 using System;
 
