@@ -33,7 +33,7 @@ namespace lab12._3
                         {
                             tree.CreateBalancedTree(size);
                             Console.WriteLine("\nИсходное дерево:");
-                            tree.PrintTree(original: true);
+                            tree.ShowTree(original: true);
                         }
                         else
                         {
@@ -43,12 +43,12 @@ namespace lab12._3
 
                     case "2":
                         Console.WriteLine("\nИсходное дерево:");
-                        tree.PrintTree(original: true);
+                        tree.ShowTree(original: true);
                         break;
 
                     case "3":
                         Console.WriteLine("\nПреобразованное дерево:");
-                        tree.PrintTree();
+                        tree.ShowTree();
                         break;
 
                     case "4":
@@ -61,9 +61,9 @@ namespace lab12._3
                             tree.ConvertToAVLTree();
                             Console.WriteLine("\nДерево преобразовано в АВЛ-дерево поиска");
                             Console.WriteLine("\nИсходное дерево:");
-                            tree.PrintTree(original: true);
+                            tree.ShowTree(original: true);
                             Console.WriteLine("\nАВЛ-дерево:");
-                            tree.PrintTree();
+                            tree.ShowTree();
                         }
                         else
                         {
@@ -83,7 +83,7 @@ namespace lab12._3
                         {
                             tree.Insert(addFigure);
                             Console.WriteLine("\nЭлемент добавлен. Текущее дерево:");
-                            tree.PrintTree();
+                            tree.ShowTree();
                         }
                         break;
 
@@ -102,7 +102,7 @@ namespace lab12._3
                                 if (tree.DeleteNode(delFigure))
                                 {
                                     Console.WriteLine("\nЭлемент удален. Текущее дерево:");
-                                    tree.PrintTree();
+                                    tree.ShowTree();
                                 }
                                 else
                                 {

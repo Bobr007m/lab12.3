@@ -25,7 +25,7 @@ namespace lab12._3
             public TreeNode(Geometryfigure1 data)
             {
                 Data = data;
-                Left = Right = null;     // Инициализация потомков как null
+                Left = Right = null;     
                 Height = 1;              // Высота нового узла всегда 1
             }
         }
@@ -33,20 +33,20 @@ namespace lab12._3
         // Приватные поля класса
         private TreeNode root;           // Корень основного дерева
         private TreeNode originalRoot;    // Корень копии исходного дерева
-        private Random rnd = new Random(); // Генератор случайных чисел
+        private Random rnd = new Random(); 
 
         #region Вспомогательные методы AVL-дерева
 
         /// <summary>
-        /// Получение высоты узла (с обработкой null-значений)
+        /// Получение высоты узла 
         /// </summary>
         private int GetHeight(TreeNode node)
         {
-            return node?.Height ?? 0;    // Для null возвращаем 0
+            return node?.Height ?? 0;    
         }
 
         /// <summary>
-        /// Обновление высоты узла на основе высот потомков
+        /// Обновление высоты узла 
         /// </summary>
         private void UpdateHeight(TreeNode node)
         {
@@ -216,9 +216,9 @@ namespace lab12._3
         #region Методы работы с деревом
 
         /// <summary>
-        /// Печать дерева по уровням
+        /// Вывод дерева в иерархическом формате
         /// </summary>
-        public void PrintTree(bool original = false)
+        public void ShowTree(bool original = false)
         {
             TreeNode currentRoot = original ? originalRoot : root;
             if (currentRoot == null)
@@ -227,30 +227,29 @@ namespace lab12._3
                 return;
             }
 
-            // Обход в ширину с использованием очереди
-            Queue<TreeNode> queue = new Queue<TreeNode>();
-            queue.Enqueue(currentRoot);
+            // Рекурсивная функция для вывода дерева
+            ShowTreeRecursive(currentRoot, 0);
+        }
 
-            int level = 0;
-            while (queue.Count > 0)
+        /// <summary>
+        /// Рекурсивная функция для вывода дерева
+        /// </summary>
+        private void ShowTreeRecursive(TreeNode node, int level)
+        {
+            if (node == null) return;
+
+            // Вывод правого поддерева (рекурсивно)
+            ShowTreeRecursive(node.Right, level + 1);
+
+            // Вывод текущего узла с отступами
+            for (int i = 0; i < level; i++)
             {
-                Console.Write($"Уровень {level}: ");
-                int levelSize = queue.Count;
-
-                // Обработка всех узлов текущего уровня
-                for (int i = 0; i < levelSize; i++)
-                {
-                    TreeNode current = queue.Dequeue();
-                    Console.Write(current.Data + " | ");
-
-                    // Добавление потомков в очередь
-                    if (current.Left != null) queue.Enqueue(current.Left);
-                    if (current.Right != null) queue.Enqueue(current.Right);
-                }
-
-                Console.WriteLine();
-                level++;
+                Console.Write("   "); // Отступы для каждого уровня
             }
+            Console.WriteLine(node.Data); // Вывод данных узла
+
+            // Вывод левого поддерева (рекурсивно)
+            ShowTreeRecursive(node.Left, level + 1);
         }
 
         /// <summary>
