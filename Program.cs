@@ -8,19 +8,18 @@ namespace lab12._3
     {
         public static void Main(string[] args)
         {
-            BinaryTree tree = new BinaryTree();
+            BinaryTree<Geometryfigure1> tree = new BinaryTree<Geometryfigure1>();
             bool exit = false;
 
             while (!exit)
             {
                 Console.WriteLine("\nМеню:");
                 Console.WriteLine("1. Создать идеально сбалансированное дерево");
-                Console.WriteLine("2. Показать исходное дерево (по уровням)");
-                Console.WriteLine("3. Показать преобразованное дерево (по уровням)");
-                Console.WriteLine("4. Найти количество листьев в текущем дереве");
-                Console.WriteLine("5. Преобразовать в АВЛ-дерево поиска");
-                Console.WriteLine("6. Добавить элемент в АВЛ-дерево");
-                Console.WriteLine("7. Удалить элемент из АВЛ-дерева");
+                Console.WriteLine("2. Показать дерево (по уровням)");
+                Console.WriteLine("3. Найти количество листьев в дереве");
+                Console.WriteLine("4. Преобразовать в АВЛ-дерево поиска");
+                Console.WriteLine("5. Добавить элемент в дерево");
+                Console.WriteLine("6. Удалить элемент из дерева");
                 Console.WriteLine("0. Выход");
                 Console.Write("Выберите действие: ");
 
@@ -32,8 +31,8 @@ namespace lab12._3
                         if (int.TryParse(Console.ReadLine(), out int size) && size > 0)
                         {
                             tree.CreateBalancedTree(size);
-                            Console.WriteLine("\nИсходное дерево:");
-                            tree.ShowTree(original: true);
+                            Console.WriteLine("\nДерево создано:");
+                            tree.ShowTree();
                         }
                         else
                         {
@@ -42,26 +41,19 @@ namespace lab12._3
                         break;
 
                     case "2":
-                        Console.WriteLine("\nИсходное дерево:");
-                        tree.ShowTree(original: true);
-                        break;
-
-                    case "3":
-                        Console.WriteLine("\nПреобразованное дерево:");
+                        Console.WriteLine("\nТекущее дерево:");
                         tree.ShowTree();
                         break;
 
-                    case "4":
+                    case "3":
                         Console.WriteLine($"\nКоличество листьев: {tree.CountLeaves()}");
                         break;
 
-                    case "5":
+                    case "4":
                         if (tree.CountLeaves() > 0)
                         {
                             tree.ConvertToAVLTree();
                             Console.WriteLine("\nДерево преобразовано в АВЛ-дерево поиска");
-                            Console.WriteLine("\nИсходное дерево:");
-                            tree.ShowTree(original: true);
                             Console.WriteLine("\nАВЛ-дерево:");
                             tree.ShowTree();
                         }
@@ -71,7 +63,7 @@ namespace lab12._3
                         }
                         break;
 
-                    case "6":
+                    case "5":
                         Console.WriteLine("\nВыберите тип фигуры для добавления:");
                         Console.WriteLine("1 - Прямоугольник");
                         Console.WriteLine("2 - Окружность");
@@ -87,7 +79,7 @@ namespace lab12._3
                         }
                         break;
 
-                    case "7":
+                    case "6":
                         if (tree.CountLeaves() > 0)
                         {
                             Console.WriteLine("\nВыберите тип фигуры для удаления:");
@@ -106,7 +98,7 @@ namespace lab12._3
                                 }
                                 else
                                 {
-                                    Console.WriteLine("Элемент не найден");
+                                    Console.WriteLine("Элемент не найден/удален");
                                 }
                             }
                         }
@@ -121,7 +113,7 @@ namespace lab12._3
                         break;
 
                     default:
-                        Console.WriteLine("Неверный ввод. Пожалуйста, выберите пункт меню от 0 до 7");
+                        Console.WriteLine("Неверный ввод. Пожалуйста, выберите пункт меню от 0 до 6");
                         break;
                 }
             }
